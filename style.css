@@ -1,0 +1,592 @@
+/* ==========================================================================
+   1. DESIGN SYSTEM VARIABLES & THEMES
+   ========================================================================== */
+:root {
+    /* Light Mode Colors (Muted & Clean) */
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --bg-nav: rgba(255, 255, 255, 0.9);
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --primary: #4f46e5;      /* Indigo Accent */
+    --primary-hover: #4338ca;
+    --border-color: #e2e8f0;
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --shadow-inset: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    --timeline-line: #cbd5e1;
+}
+
+/* CSS-Only Dark Mode Logic via Checkbox State */
+.theme-checkbox:checked ~ .app-container {
+    --bg-main: #0f172a;       /* Slate 900 */
+    --bg-card: #1e293b;       /* Slate 800 */
+    --bg-nav: rgba(15, 23, 42, 0.9);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #818cf8;       /* Lighter Indigo for Dark Mode contrast */
+    --primary-hover: #6366f1;
+    --border-color: #334155;
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --shadow-inset: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    --timeline-line: #334155;
+}
+
+/* ==========================================================================
+   2. GLOBAL RESETS & BASE STYLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth; /* Smooth scrolling feature */
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0f172a; /* Prevents white flash during theme render */
+    overflow-x: hidden;
+}
+
+.app-container {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section {
+    padding: 100px 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.section-desc {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 60px;
+    font-size: 1.1rem;
+}
+
+.hidden-input {
+    display: none; /* Hides theme/filter checkboxes from layout */
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    margin-left: 15px;
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+/* ==========================================================================
+   3. STICKY NAVBAR & THEME TOGGLE UI
+   ========================================================================== */
+.navbar {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-nav);
+    backdrop-filter: blur(8px); /* Modern blurry background glass effect */
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    transition: background-color 0.4s;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+/* Theme Toggle Button Style */
+.theme-toggle-label {
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+.theme-toggle-label:active {
+    transform: scale(0.9);
+}
+
+/* Theme Icons Swap Logic */
+.sun-icon { display: none; color: #f59e0b; }
+.moon-icon { color: #6366f1; }
+
+.theme-checkbox:checked ~ .app-container .sun-icon { display: block; }
+.theme-checkbox:checked ~ .app-container .moon-icon { display: none; }
+
+/* ==========================================================================
+   4. HERO SECTION (WITH CIRCULAR IMAGE)
+   ========================================================================== */
+.hero-section {
+    padding: 120px 0 80px 0;
+    display: flex;
+    align-items: center;
+}
+
+.hero-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.hero-subtitle {
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.accent-text {
+    color: var(--primary);
+}
+
+.hero-content p {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 40px;
+}
+
+/* Circular Profile Pic Requirements */
+.hero-image-area {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-img-box {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   5. TIMELINE-BASED EXPERIENCE SECTION
+   ========================================================================== */
+.experience-section {
+    background-color: var(--bg-card);
+}
+
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+
+
+}
+
+/* Vertical Center Line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: var(--timeline-line);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.timeline-item {
+    position: relative;
+    width: 50%;
+    padding: 20px 40px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Timeline center dots */
+.timeline-dot {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    right: -9px;
+    background-color: var(--bg-card);
+    border: 4px solid var(--primary);
+    border-radius: 50%;
+    top: 28px;
+    z-index: 10;
+}
+
+.timeline-item.right .timeline-dot {
+    left: -9px;
+}
+
+/* Alternating Alignment Layout */
+.timeline-item.left { left: 0; }
+.timeline-item.right { left: 50%; }
+
+.timeline-content {
+    padding: 25px;
+    background-color: var(--bg-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+}
+
+.timeline-date {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.timeline-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+
+.timeline-content h4 {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   6. SKILLS SECTION & ANIMATED PROGRESS BARS
+   ========================================================================== */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.skill-card {
+    background-color: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Requirement: Hover Interactions on Skill Icons */
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+}
+
+.skill-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.skill-icon {
+    font-size: 2.5rem;
+    transition: transform 0.3s ease;
+}
+
+/* Icon specific custom hover micro-interactions */
+.skill-card:hover .skill-icon {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Brand Colors */
+.html-color { color: #e34c26; }
+.css-color { color: #264de4; }
+.js-color { color: #f7df1e; }
+.figma-color { color: #f24e1e; }
+
+.skill-text {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.skill-text h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.skill-percentage {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Outer Progress Wrap */
+.progress-bar-wrap {
+    background-color: var(--border-color);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-inset);
+}
+
+/* Inner Progress Fill and keyframes configuration */
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 10px;
+    width: 0; /* Base width before loading animation triggers */
+}
+
+/* Keyframes CSS-only Animation Trigger on rendering */
+@keyframes fill-html { to { width: 95%; } }
+@keyframes fill-css { to { width: 90%; } }
+@keyframes fill-js { to { width: 80%; } }
+@keyframes fill-figma { to { width: 75%; } }
+
+.p-html { animation: fill-html 1.5s forwards ease-in-out; }
+.p-css { animation: fill-css 1.5s forwards ease-in-out 0.2s; }
+.p-js { animation: fill-js 1.5s forwards ease-in-out 0.4s; }
+.p-figma { animation: fill-figma 1.5s forwards ease-in-out 0.6s; }
+
+/* ==========================================================================
+   7. PORTFOLIO SECTION (FILTERABLE CATEGORIES CSS-ONLY)
+   ========================================================================== */
+.portfolio-section {
+    background-color: var(--bg-card);
+}
+
+/* Styling labels to act as modern filter tab buttons */
+.filter-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 45px;
+}
+
+.tab-label {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+/* CSS-Only Tabs Activation Status styling rules */
+#filter-all:checked ~ .container .filter-tabs label[for="filter-all"],
+#filter-web:checked ~ .container .filter-tabs label[for="filter-web"],
+#filter-design:checked ~ .container .filter-tabs label[for="filter-design"] {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Portfolio Content Display Engine Rules */
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.p-card {
+    background-color: var(--bg-main);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s;
+}
+
+.p-card:hover {
+    transform: translateY(-5px);
+}
+
+.p-img-box img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    display: block;
+}
+
+.p-info {
+    padding: 25px;
+}
+
+.p-category {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.p-info h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.p-info p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* --- THE FILTERING ENGINE POWERHOUSE --- */
+/* Hide unselected categories using sibling combination logic rules */
+#filter-web:checked ~ .container .portfolio-grid .portfolio-item:not(.web) {
+    display: none;
+}
+#filter-design:checked ~ .container .portfolio-grid .portfolio-item:not(.design) {
+    display: none;
+}
+
+/* ==========================================================================
+   8. FOOTER STYLING
+   ========================================================================== */
+.footer {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--bg-main);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* ==========================================================================
+   9. RESPONSIVE MEDIA QUERIES (BREAKPOINTS)
+   ========================================================================== */
+@media (max-width: 992px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .hero-image-area {
+        order: -1; /* Pushes image above text on smaller layouts */
+    }
+    .profile-img-box {
+        width: 260px;
+        height: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* Mobile navbar logic simplifies */
+    
+    /* Timeline goes 100% full width stack */
+    .timeline::before { left: 20px; }
+    .timeline-item {
+        width: 100%;
+        padding-left: 45px;
+        padding-right: 0;
+    }
+    .timeline-item.right { left: 0; }
+    .timeline-dot { left: 11px !important; }
+
+    .skills-grid, .portfolio-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-content h1 { font-size: 2.5rem; }
+    .filter-tabs { flex-wrap: wrap; }
+} 
+
